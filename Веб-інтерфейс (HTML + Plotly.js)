@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+  <h2>Моніторинг температури і вологості</h2>
+  <div id="chart"></div>
+  <button onclick="downloadCSV()">Завантажити CSV</button>
+
+  <script>
+    async function fetchData() {
+      const response = await fetch('data.csv'); // або повний шлях
+      const text = await response.text();
+      const lines = text.trim().split('\n');
+      const timestamps = [], temps = [], hums = [];
+
+      lines.forEach(line => {
+        const [time, temp, hum] = line.split(',');
+        timestamps.push(new Date(+time));
+        temps.push(+temp);
+        hums.push(+hum);
+      });
+
+      Plotly.newPlot('chart', [
+        { x: timestamps, y: temps, name: 'Температура', type: 'scatter' },
+        { x: timestamps, y: hums, name: 'Вологість', type: 'scatter' }
+      ]);
+    }
+
+    function downloadCSV() {
+      window.location.href = '/csv';
+    }
+
+    fetchData();
+  </script>
+</body>
+</html>
