@@ -1,0 +1,21 @@
+const express = require("express");
+const fs = require("fs");
+const cors = require("cors");
+const app = express();
+const port = 3000;
+
+app.use(cors());
+app.use(express.json());
+
+app.post("/data", (req, res) => {
+  const { temperature, humidity } = req.body;
+  const line = `${Date.now()},${temperature},${humidity}\n`;
+  fs.appendFileSync("data.csv", line);
+  res.sendStatus(200);
+});
+
+app.get("/csv", (req, res) => {
+  res.download("data.csv");
+});
+
+app.listen(port, () => console.log(`Server on port ${port}`));
